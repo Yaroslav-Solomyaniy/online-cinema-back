@@ -6,18 +6,18 @@ import { UserModel } from './user.model';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [
-    TypegooseModule.forFeature([
-      {
-        typegooseClass: UserModel,
-        schemaOptions: {
-          collection: 'User',
-        },
-      },
-    ]),
-    ConfigModule,
-  ],
-  controllers: [UserController],
-  providers: [UserService],
+	imports: [
+		TypegooseModule.forFeature([
+			{
+				typegooseClass: UserModel,
+				schemaOptions: {
+					collection: 'User',
+				},
+			},
+		]),
+		ConfigModule,
+	],
+	controllers: [UserController],
+	providers: [UserService],
 })
 export class UserModule {}
