@@ -31,8 +31,19 @@ export class ActorService {
 					},
 				],
 			};
-		return this.ActorModel.find(options)
-			.select('-password -updatedAt -__v')
+		return this.ActorModel.aggregate()
+			.match(options)
+			.lookup({
+				from: 'Movie',
+				foreignField: 'actors',
+				localField: '_id',
+				as: 'movies',
+			})
+			.addFields({
+				countMovies: {
+					$size: '$movies',
+				},
+			})
 			.sort({
 				createdAt: 'desc',
 			});

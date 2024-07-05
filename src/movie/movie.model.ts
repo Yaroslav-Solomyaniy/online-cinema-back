@@ -29,9 +29,6 @@ export class MovieModel extends TimeStamps {
 	@Prop()
 	title: string;
 
-	@Prop()
-	description: string;
-
 	@Prop({ unique: true })
 	slug: string;
 

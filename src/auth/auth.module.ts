@@ -9,23 +9,23 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { getJWTConfig } from '../config/jwt.config';
 
 @Module({
-  imports: [
-    TypegooseModule.forFeature([
-      {
-        typegooseClass: UserModel,
-        schemaOptions: {
-          collection: 'User',
-        },
-      },
-    ]),
-    ConfigModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: getJWTConfig,
-    }),
-  ],
-  providers: [AuthService, JwtStrategy],
-  controllers: [AuthController],
+	imports: [
+		TypegooseModule.forFeature([
+			{
+				typegooseClass: UserModel,
+				schemaOptions: {
+					collection: 'User',
+				},
+			},
+		]),
+		ConfigModule,
+		JwtModule.registerAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: getJWTConfig,
+		}),
+	],
+	providers: [AuthService, JwtStrategy],
+	controllers: [AuthController],
 })
 export class AuthModule {}
