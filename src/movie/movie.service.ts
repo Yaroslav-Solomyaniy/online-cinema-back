@@ -75,6 +75,14 @@ export class MovieService {
 		return updateMovie;
 	}
 
+	async updateRating(id: Types.ObjectId, newRating: number) {
+		return this.MovieModel.findByIdAndUpdate(
+			id,
+			{ rating: newRating },
+			{ new: true },
+		).exec();
+	}
+
 	async byId(_id: string) {
 		const docs = await this.MovieModel.findById(_id);
 
