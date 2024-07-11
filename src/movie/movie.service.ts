@@ -4,11 +4,13 @@ import { ModelType } from '@typegoose/typegoose/lib/types';
 import { Types } from 'mongoose';
 import { MovieModel } from './movie.model';
 import { UpdateMovieDto } from './update-movie.dto';
+import { TelegramService } from '../telegram/telegram.service';
 
 @Injectable()
 export class MovieService {
 	constructor(
 		@InjectModel(MovieModel) private readonly MovieModel: ModelType<MovieModel>,
+		private readonly telegramService: TelegramService,
 	) {}
 
 	async getAll(searchTerm?: string) {
@@ -106,6 +108,10 @@ export class MovieService {
 	}
 
 	async update(_id: string, dto: UpdateMovieDto) {
+		if (!dto.isSendTelegram) {
+			await this.sendNotification(dto);
+			dto.isSendTelegram = true;
+		}
 		const updateMovie = await this.MovieModel.findByIdAndUpdate(_id, dto, {
 			new: true,
 		}).exec();
@@ -118,5 +124,25 @@ export class MovieService {
 		const deleteMovie = await this.MovieModel.findByIdAndDelete(id).exec();
 		if (!deleteMovie) throw new NotFoundException('movie not found');
 		return deleteMovie;
+	}
+
+	async sendNotification(dto: UpdateMovieDto) {
+		await this.telegramService.sendPhoto(
+			'https://lionsgate.brightspotcdn.com/1d/90/8fc75de5411e985f3a2def98358d/johnwick4-section-promo-double-home-03.jpg',
+		);
+
+		const msg = `<b>${dto.title}</b>`;
+		await this.telegramService.sendMessage(msg, {
+			reply_markup: {
+				inline_keyboard: [
+					[
+						{
+							url: 'https://lionsgate.brightspotcdn.com/1d/90/8fc75de5411e985f3a2def98358d/johnwick4-section-promo-double-home-03.jpg',
+							text: 'Go to watch',
+						},
+					],
+				],
+			},
+		});
 	}
 }
