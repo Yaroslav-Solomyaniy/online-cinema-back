@@ -24,7 +24,7 @@ export class RatingService {
 	async setRating(userId: Types.ObjectId, dto: SetRatingDto) {
 		const { movieId, value } = dto;
 
-		const newRating = await this.RatingModel.findByIdAndUpdate(
+		const newRating = await this.RatingModel.findOneAndUpdate(
 			{ movieId, userId },
 			{ movieId, userId, value },
 			{ new: true, upsert: true, setDefaultsOnInsert: true },
