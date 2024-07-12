@@ -46,13 +46,20 @@ export class GenreService {
 
 	async getCollections() {
 		const genres = await this.getAll();
-		return await Promise.all(
+		const collections = await Promise.all(
 			genres.map(async (genre) => {
-				const moviesByGenre = await this.movieService.byGenres([genre._id]);
+				// Устанавливаем флаг throwOnEmpty в false, чтобы не выбрасывать исключение
+				const moviesByGenre = await this.movieService.byGenres(
+					[genre._id],
+					false,
+				);
+
+				// Если нет фильмов для жанра, пропускаем его
+				if (!moviesByGenre) return null;
 
 				const result: ICollection = {
 					_id: String(genre._id),
-					image: moviesByGenre.bigPoster,
+					image: moviesByGenre.bigPoster ? moviesByGenre.bigPoster : null,
 					slug: genre.slug,
 					title: genre.name,
 				};
@@ -60,6 +67,9 @@ export class GenreService {
 				return result;
 			}),
 		);
+
+		// Убираем null значения из массива коллекций
+		return collections.filter((collection) => collection !== null);
 	}
 
 	//admin
